@@ -1,0 +1,14 @@
+[
+	{
+		"title" : "Las dos torres",
+		"description" : "La Comunidad se ha disuelto y sus integrantes emprenden caminos separados. Frodo y Sam continúan solos su viaje a lo largo del río Anduin",
+		"year" : 2009,
+		"pages" : 476,
+		"isbn" : "9788445077504",
+		"editorial" : "Booket",
+		"edition" : 1,
+		"autor" : "J.R.R. Tolkien",
+		"cover" : "lasdostorres.png",
+		"category_id" : 2
+	}
+]
