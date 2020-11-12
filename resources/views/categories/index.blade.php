@@ -8,7 +8,7 @@
       </div>
       <div class="col-md-4 col 12">
         <button class="btn btn-primary float-right" data-toggle="modal" data-target="#addCategoryModal">
-          Add Category
+          Add category
         </button>
       </div>
     </div>
@@ -22,7 +22,8 @@
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Name</th>
+                    <th>Name</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -36,6 +37,15 @@
                     </th>
                     <td>
                       {{ $category->name }}
+                    </td>
+                    <td>
+                      <button onclick="editCategory({{ $category->id }},'{{ $category->name }}')" class="btn btn-warning" data-toggle="modal" data-target="#editCategoryModal">
+                        Edit category
+                      </button>
+
+                      <button onclick="deleteCategory({{ $category->id }}, this)" class="btn btn-danger">
+                        Delete category
+                      </button>
                     </td>
                   </tr>
 
@@ -84,5 +94,103 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit category</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" action="{{ url('categories') }}">
+          @csrf
+          @method('PUT')
+          <div class="modal-body">
+            
+            <div class="form-group">
+              <label for="exampleInputEmail1">Name</label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">@</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Category name" id="name" name="name" aria-label="category" aria-describedby="basic-addon1">
+              </div>
+            </div>
+
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Save category
+            </button>
+            <input type="hidden" name="id" id="id">
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <x-slot name="scripts">
+    <script type="text/javascript">
+      
+      function editCategory (id,name) 
+      {
+        $("#id").val(id)
+        $("#name").val(name)
+      }
+
+      function deleteCategory (id,target)
+      {
+        swal({
+          title: "Are you sure?",
+          text: "Once deleted, you will not be able to recover this imaginary file!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            axios.delete('{{ url('categories') }}/'+id, {
+              id: id,
+              _token: '{{ csrf_token() }}' 
+            })
+            .then(function (response) {
+              
+              if (response.data.code==200) 
+              {
+                swal( response.data.message , {
+                  icon: "success",
+                });
+
+                $(target).parent().parent().remove()
+
+              }else
+              {
+                swal( response.data.message , {
+                  icon: "error",
+                });
+              }
+            })
+            .catch(function (error) {
+              swal( 'Error ocurred' , {
+                icon: "error",
+              });
+            })
+            .then(function () {
+              // always executed
+            });  
+          }
+        });
+      }
+    </script>
+  </x-slot>  
 
 </x-app-layout>
