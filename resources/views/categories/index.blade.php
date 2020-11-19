@@ -14,6 +14,25 @@
     </div>
   </x-slot>
 
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          @if (session('status'))
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <strong>
+                {{ session('status') }}
+              </strong>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          @endif
+        </div>
+      </div>
+    </div>
+  </section>
+
   <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
