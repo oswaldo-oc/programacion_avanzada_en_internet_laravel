@@ -19,9 +19,19 @@
       <div class="row">
         <div class="col">
           @if (session('status'))
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
               <strong>
                 {{ session('status') }}
+              </strong>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          @endif
+          @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <strong>
+                {{ session('error') }}
               </strong>
               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -170,7 +180,7 @@
       {
         swal({
           title: "Are you sure?",
-          text: "Once deleted, you will not be able to recover this imaginary file!",
+          text: "Once deleted, you will not be able to recover this entry!",
           icon: "warning",
           buttons: true,
           dangerMode: true,

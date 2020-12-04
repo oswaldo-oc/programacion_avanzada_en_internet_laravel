@@ -25,9 +25,9 @@ Route::get('/suma/{num1}/{num2}', 'WebController@suma');
 
 })->where(array( 'num1'=>'[0-9]+', 'num2'=>'[0-9]+'));*/
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->get('/home', function () {
+    return view('home');
+})->name('home');
 
 Route::group(['middleware' => ['auth']], function(){
 
@@ -42,4 +42,16 @@ Route::group(['middleware' => ['auth']], function(){
 	Route::post('/categories','CategoryController@store');
 	Route::put('/categories', 'CategoryController@update');
 	Route::delete('/categories/{category}', 'CategoryController@destroy');
+
+	//Users
+	Route::get('/users','UserController@index');
+	Route::post('/users','UserController@store');
+	Route::put('/users', 'UserController@update');
+	Route::delete('/users/{user}', 'UserController@destroy');
+
+	//Loans
+	Route::get('/loans','LoanController@index');
+	Route::post('/loans','LoanController@store');
+	Route::put('/loans', 'LoanController@update');
+	Route::delete('/loans/{loan}', 'LoanController@destroy');
 });

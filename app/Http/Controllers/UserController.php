@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 use Auth;
 
-class CategoryController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,9 +16,9 @@ class CategoryController extends Controller
      */
     public function index()
     {   
-        if (Auth::user()->hasPermissionTo('crud categories')) {
-            $categories = Category::all();
-            return view('categories.index', compact('categories'));
+        if (Auth::user()->hasPermissionTo('crud users')) {
+            $users = User::all();
+            return view('users.index', compact('users'));
         }else {
             return redirect()->back()->with('error','No tiene los permisos necesarios');
         }    
@@ -42,12 +42,16 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::user()->hasPermissionTo('crud categories')) {
+        if (Auth::user()->hasPermissionTo('crud users')) {
 
-            if ($category = Category::create($request->all())) {
-                return redirect()->back()->with('status','La categoría se creó con éxito');
+            if ($user = User::create($request->all())) {
+
+                if ($user->role_id!=null) {
+                    $user->assignRole($user->role_id);
+                }
+                return redirect()->back()->with('status','El usuario se registró con éxito');
             }
-            return redirect()->back()->with('error','No se pudo crear la categoría');
+            return redirect()->back()->with('error','No se pudo registrar al usuario');
 
         }else {
             return redirect()->back()->with('error','No tiene los permisos necesarios');
@@ -57,10 +61,10 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(User $user)
     {
         //
     }
@@ -68,10 +72,10 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit(User $user)
     {
         //
     }
@@ -80,23 +84,26 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
-        if (Auth::user()->hasPermissionTo('crud categories')) {
+        if (Auth::user()->hasPermissionTo('crud users')) {
 
-            $category= Category::find($request->id);
+            $user= User::find($request->id);
 
-            if($category)
+            if($user)
             {
-                if($category->update($request->all())) 
+                if($user->update($request->all())) 
                 {
-                    return redirect()->back()->with('status','La categoría se modificó con éxito');
+                    if ($user->role_id!=null) {
+                        $user->assignRole($user->role_id);
+                    }
+                    return redirect()->back()->with('status','El usuario se modificó con éxito');
                 }
             }
-            return redirect()->back()->with('error','No se pudo editar la categoría');
+            return redirect()->back()->with('error','No se pudo editar al usuario');
 
         }else {
             return redirect()->back()->with('error','No tiene los permisos necesarios');
@@ -106,23 +113,23 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(User $user)
     {
-        if (Auth::user()->hasPermissionTo('crud categories')) {
+        if (Auth::user()->hasPermissionTo('crud users')) {
           
-            if ($category->delete())
+            if ($user->delete())
             {
                 return response()->json([
 
-                    'message' => 'Categoría eliminada con éxito',
+                    'message' => 'Usuario eliminado con éxito',
                     'code' => '200'
                 ]);
             }
             return response()->json([
-                'message' => 'No se ha podido eliminar la categoría',
+                'message' => 'No se ha podido eliminar al usuario',
                 'code' => '400'
             ]);
 

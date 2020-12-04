@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Loan;
+use App\Models\Book;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-use Auth;
-
-class CategoryController extends Controller
+class LoanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,13 +15,15 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   
-        if (Auth::user()->hasPermissionTo('crud categories')) {
-            $categories = Category::all();
-            return view('categories.index', compact('categories'));
+    {
+        if (Auth::user()->hasPermissionTo('view loans')) {
+            $loans = Loan::all();
+            $books = Book::all();
+            $users = User::all();
+            return view('loans.index', compact('loans','books','categories'));
         }else {
             return redirect()->back()->with('error','No tiene los permisos necesarios');
-        }    
+        }
     }
 
     /**
@@ -42,14 +44,12 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::user()->hasPermissionTo('crud categories')) {
-
-            if ($category = Category::create($request->all())) {
-                return redirect()->back()->with('status','La categoría se creó con éxito');
+        if (Auth::user()->hasPermissionTo('add loans')) {   
+            if ($loan = Loan::create($request->all())) {
+                return redirect()->back()->with('status','El préstamo se creó con éxito');
             }
-            return redirect()->back()->with('error','No se pudo crear la categoría');
-
-        }else {
+            return redirect()->back()->with('error','No se pudo crear el préstamo');
+        }else{
             return redirect()->back()->with('error','No tiene los permisos necesarios');
         }
     }
@@ -57,10 +57,10 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Loan  $loan
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(Loan $loan)
     {
         //
     }
@@ -68,10 +68,10 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Loan  $loan
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit(Loan $loan)
     {
         //
     }
@@ -80,24 +80,23 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Loan  $loan
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, Loan $loan)
     {
-        if (Auth::user()->hasPermissionTo('crud categories')) {
+        if (Auth::user()->hasPermissionTo('update loans')) { 
 
-            $category= Category::find($request->id);
+            $loan= Loan::find($request->id);
 
-            if($category)
+            if($loan)
             {
-                if($category->update($request->all())) 
+                if($loan->update($request->all())) 
                 {
-                    return redirect()->back()->with('status','La categoría se modificó con éxito');
+                    return redirect()->back()->with('status','El préstamo se modificó con éxito');
                 }
             }
-            return redirect()->back()->with('error','No se pudo editar la categoría');
-
+            return redirect()->back()->with('error','No se pudo editar el préstamo');
         }else {
             return redirect()->back()->with('error','No tiene los permisos necesarios');
         }
@@ -106,23 +105,23 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Loan  $loan
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Loan $loan)
     {
-        if (Auth::user()->hasPermissionTo('crud categories')) {
+        if (Auth::user()->hasPermissionTo('delete loans')) {
           
-            if ($category->delete())
+            if ($loan->delete())
             {
                 return response()->json([
 
-                    'message' => 'Categoría eliminada con éxito',
+                    'message' => 'Préstamo eliminado con éxito',
                     'code' => '200'
                 ]);
             }
             return response()->json([
-                'message' => 'No se ha podido eliminar la categoría',
+                'message' => 'No se ha podido eliminar el préstamo',
                 'code' => '400'
             ]);
 

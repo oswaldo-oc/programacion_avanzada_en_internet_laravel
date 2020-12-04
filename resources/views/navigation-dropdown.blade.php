@@ -5,16 +5,38 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('home') }}">
                         <x-jet-application-mark class="block h-9 w-auto" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                <div class="hidden space-x-3 sm:-my-px sm:ml-10 sm:flex">
+
+                    <x-jet-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
+                        {{ __('Home') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ url('books') }}" :active="request()->routeIs('/books')">
+                        {{ __('Books') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ url('loans') }}" :active="request()->routeIs('/loans')">
+                        {{ __('Loans') }}
+                    </x-jet-nav-link>
+
+                    @if (Auth::user()->hasPermissionTo('crud categories'))
+
+                    <x-jet-nav-link href="{{ url('categories') }}" :active="request()->routeIs('/categories')">
+                        {{ __('Categories') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ url('users') }}" :active="request()->routeIs('/users')">
+                        {{ __('Users') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ url('dashboard') }}" :active="request()->routeIs('/dashboard')">
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
+
+                    @endif
+
                 </div>
             </div>
 
@@ -47,14 +69,6 @@
 
                         <x-jet-dropdown-link href="{{ route('profile.show') }}">
                             {{ __('Profile') }}
-                        </x-jet-dropdown-link>
-
-                        <x-jet-dropdown-link href="{{ url('books') }}">
-                            {{ __('Books') }}
-                        </x-jet-dropdown-link>
-
-                        <x-jet-dropdown-link href="{{ url('categories') }}">
-                            {{ __('Categories') }}
                         </x-jet-dropdown-link>
 
                         @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
@@ -125,9 +139,29 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-jet-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+            <x-jet-responsive-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
+                {{ __('Home') }}
+            </x-jet-responsive-nav-link>
+            <x-jet-responsive-nav-link href="{{ url('books') }}" :active="request()->routeIs('books')">
+                {{ __('Books') }}
+            </x-jet-responsive-nav-link>
+            <x-jet-responsive-nav-link href="{{ url('loans') }}" :active="request()->routeIs('/loans')">
+                {{ __('Loans') }}
+            </x-jet-responsive-nav-link>
+
+            @if (Auth::user()->hasPermissionTo('crud categories'))
+
+            <x-jet-responsive-nav-link href="{{ url('categories') }}" :active="request()->routeIs('/categories')">
+                {{ __('Categories') }}
+            </x-jet-responsive-nav-link>
+            <x-jet-responsive-nav-link href="{{ url('users') }}" :active="request()->routeIs('/users')">
+                {{ __('Users') }}
+            </x-jet-responsive-nav-link>
+            <x-jet-responsive-nav-link href="{{ url('dashboard') }}" :active="request()->routeIs('/dashboard')">
                 {{ __('Dashboard') }}
             </x-jet-responsive-nav-link>
+
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

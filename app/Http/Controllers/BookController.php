@@ -6,6 +6,8 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
+use Auth;
+
 class BookController extends Controller
 {
     /**
@@ -15,9 +17,13 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::all();
-        $categories = Category::all();
-        return view('books.index', compact('books','categories'));
+        if (Auth::user()->hasPermissionTo('view books')) {
+            $books = Book::all();
+            $categories = Category::all();
+            return view('books.index', compact('books','categories'));
+        }else {
+            return redirect()->back()->with('error','No tiene los permisos necesarios');
+        }
     }
 
     /**
@@ -38,19 +44,23 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        if ($book = Book::create($request->all())) {
+        if (Auth::user()->hasPermissionTo('add books')) {   
+            if ($book = Book::create($request->all())) {
 
-            if ($request->file('cover')) {
-                
-                $file = $request->file('cover');
-                $file_name = 'book_cover_'.$book->id.'.'.$file->getClientOriginalExtension();
-                $path = $request->file('cover')->storeAs('img/books',$file_name);
-                $book->cover = $file_name;
-                $book->save();
+                if ($request->file('cover')) {
+                    
+                    $file = $request->file('cover');
+                    $file_name = 'book_cover_'.$book->id.'.'.$file->getClientOriginalExtension();
+                    $path = $request->file('cover')->storeAs('img/books',$file_name);
+                    $book->cover = $file_name;
+                    $book->save();
+                }
+                return redirect()->back()->with('status','El libro se creó con éxito');
             }
-            return redirect()->back();
+            return redirect()->back()->with('error','No se pudo crear el libro');
+        }else{
+            return redirect()->back()->with('error','No tiene los permisos necesarios');
         }
-        return redirect()->back();
     }
 
     /**
@@ -84,7 +94,29 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
-        //
+        if (Auth::user()->hasPermissionTo('update books')) { 
+
+            $book= Book::find($request->id);
+
+            if($book)
+            {
+                if($book->update($request->all())) 
+                {
+                    if ($request->file('cover')) {
+                    
+                        $file = $request->file('cover');
+                        $file_name = 'book_cover_'.$book->id.'.'.$file->getClientOriginalExtension();
+                        $path = $request->file('cover')->storeAs('img/books',$file_name);
+                        $book->cover = $file_name;
+                        $book->save();
+                    }
+                    return redirect()->back()->with('status','El libro se modificó con éxito');
+                }
+            }
+            return redirect()->back()->with('error','No se pudo editar el libro');
+        }else {
+            return redirect()->back()->with('error','No tiene los permisos necesarios');
+        }
     }
 
     /**
@@ -95,6 +127,23 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        if (Auth::user()->hasPermissionTo('delete books')) {
+          
+            if ($book->delete())
+            {
+                return response()->json([
+
+                    'message' => 'Libro eliminado con éxito',
+                    'code' => '200'
+                ]);
+            }
+            return response()->json([
+                'message' => 'No se ha podido eliminar el libro',
+                'code' => '400'
+            ]);
+
+        }else {
+            return redirect()->back()->with('error','No tiene los permisos necesarios');
+        }
     }
 }
